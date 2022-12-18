@@ -1,0 +1,133 @@
+substitutions:
+  device_name: spapower
+
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: d1_mini
+  #includes:
+  #  - solartemp.h
+
+uart:
+  rx_pin: D1
+  tx_pin: D2
+  baud_rate: 9600
+  stop_bits: 1
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  #use_address: p1reader.local
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "esp-${device_name}"
+    password: !secret spapower_password
+
+captive_portal:
+
+# Enable logging
+logger:
+  level: INFO
+  baud_rate: 0 # disable logging over uart
+
+# Enable Home Assistant API
+api:
+  password: !secret spapower_password
+
+ota:
+  password: !secret spapower_password
+
+web_server:
+  port: 80
+  ota: false
+#  auth:
+#    username: admin
+#    password: !secret solartemp_password
+
+prometheus:
+
+text_sensor:
+# Reports the ESPHome Version with compile date
+  - platform: version
+    name: "${device_name} ESPHome Version"
+
+number:
+  - platform: template
+    name: "${device_name} update period"
+    id: spa_pwr_period
+    icon: "mdi:timer"
+    unit_of_measurement: s
+    optimistic: true
+    restore_value: true
+    min_value: 5
+    max_value: 60
+    step: 5
+    initial_value: 10 # Set to your desired update period (in seconds)
+    internal: false # Set to true to hide setting from Home Assistant etc.
+
+
+sensor:
+  - platform: wifi_signal
+    name: "${device_name} WiFi Signal"
+    update_interval: 10s
+
+  - platform: sdm_meter
+    phase_a:
+      current:
+        name: "Spabad L1 Current"
+      voltage:
+        name: "Spabad L1 Voltage"
+      active_power:
+        name: "Spabad L1 Power"
+      power_factor:
+        name: "Spabad L1 Power Factor"
+      apparent_power:
+        name: "Spabad L1 Apparent Power"
+      reactive_power:
+        name: "Spabad L1 Reactive Power"
+      phase_angle:
+        name: "Spabad L1 Phase Angle"
+    phase_b:
+      current:
+        name: "Spabad L2 Current"
+      voltage:
+        name: "Spabad L2 Voltage"
+      active_power:
+        name: "Spabad L2 Power"
+      power_factor:
+        name: "Spabad L2 Power Factor"
+      apparent_power:
+        name: "Spabad L2 Apparent Power"
+      reactive_power:
+        name: "Spabad L2 Reactive Power"
+      phase_angle:
+        name: "Spabad L2 Phase Angle"
+    phase_c:
+      current:
+        name: "Spabad L3 Current"
+      voltage:
+        name: "Spabad L3 Voltage"
+      active_power:
+        name: "Spabad L3 Power"
+      power_factor:
+        name: "Spabad L3 Power Factor"
+      apparent_power:
+        name: "Spabad L3 Apparent Power"
+      reactive_power:
+        name: "Spabad L3 Reactive Power"
+      phase_angle:
+        name: "Spabad L3 Phase Angle"
+    frequency:
+      name: "Spabad Frequency"
+    total_power:
+      name: "Spabad Total Power"
+    import_active_energy:
+      name: "Spabad Import Active Energy"
+    export_active_energy:
+      name: "Spabad Export Active Energy"
+    import_reactive_energy:
+      name: "Spabad Import Reactive Energy"
+    export_reactive_energy:
+      name: "Spabad Export Reactive Energy"
+    update_interval: 60s
