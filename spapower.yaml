@@ -33,7 +33,8 @@ logger:
 
 # Enable Home Assistant API
 api:
-  password: !secret spapower_password
+  encryption:
+    key: !secret api_encr_b64key
 
 ota:
   password: !secret spapower_password
