@@ -4,3 +4,4 @@ electricity_meter
 *.sh
 .vs
 .DS_Store
+programming_logs.txt
