@@ -3,3 +3,4 @@ secrets.yaml
 electricity_meter
 *.sh
 .vs
+.DS_Store
