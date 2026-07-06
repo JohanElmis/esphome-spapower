@@ -33,13 +33,14 @@ Clone the repository and create a companion `secrets.yaml` file with the followi
 ```
 wifi_ssid: <your wifi SSID>
 wifi_password: <your wifi password>
-solartemp_password: <Your p1mini password (for OTA, API, etc)>
+spapower_password: <Your device password (for OTA, AP fallback, etc)>
+api_encr_b64key: <a base64-encoded 32-byte key for the Home Assistant API encryption>
 ```
-Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `p1mini_password` field can be set to any password before doing the initial upload of the firmware.
+Make sure to place the `secrets.yaml` file in the root path of the cloned project.
 
-Flash ESPHome as usual, just keep the `p1mini.h` file in the same location as `p1mini.yaml` (and `secrets.yaml`). *Don't* connect USB and the P1 port at the same time! If everything works, Home Assistant will autodetect the new integration after you plug it into the P1 port.
+Flash ESPHome as usual with `spapower.yaml`. If everything works, Home Assistant will autodetect the new integration once the device is connected to the Eastron meter via Modbus.
 
-If you do not receive any data, make sure that the P1 port is enabled on your meter and try setting the log level to `DEBUG` in ESPHome for more feedback.
+If you do not receive any data, double check the Modbus wiring (RS485-TTL converter to the D1 Mini's UART pins) and try setting the log level to `DEBUG` in ESPHome for more feedback.
 
 ## Technical documentation
 Specification overview:
