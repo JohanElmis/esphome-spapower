@@ -35,15 +35,24 @@ api:
     key: !secret api_encr_b64key
 
 ota:
-  platform: esphome
-  password: !secret spapower_password
+  - platform: esphome
+    password: !secret spapower_password
+
+mqtt:
+  broker: 192.150.23.16
+#  username: villaelmerfjord
+#  password: !secret mqtt_password
+  port: 1883
+  topic_prefix: ${device_name}
+  discovery: false
+  log_topic: ${device_name}/logs
 
 web_server:
   port: 80
   ota: false
 #  auth:
 #    username: admin
-#    password: !secret solartemp_password
+#    password: !secret spapower_password
 
 prometheus:
 
@@ -55,7 +64,16 @@ text_sensor:
 sensor:
   - platform: wifi_signal
     name: "${device_name} WiFi Signal"
-    update_interval: 10s
+    id: spapower_wifi
+    update_interval: 30s
+    filters:
+      - median:
+          window_size: 5
+          send_every: 1
+      - delta: 1
+      - heartbeat:
+          period: 5min
+          optimistic: true
 
   - platform: sdm_meter
     phase_a:
@@ -115,4 +133,4 @@ sensor:
       name: "Spabad Import Reactive Energy"
     export_reactive_energy:
       name: "Spabad Export Reactive Energy"
-    update_interval: 60s
+    update_interval: 10s

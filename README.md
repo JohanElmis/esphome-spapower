@@ -2,7 +2,7 @@
 To keep full insight in the power that the Jacuzzi (Spa bath) uses I have a 3-phase electricity meter for measuring the load.
 Eastron SDM meters are supported by ESPhome - so this should be a simple task.
 
-The ESP is programmed with [ESPhome](https://esphome.io/), where it makes the data available on the built in web-interface, exposing to Prometheus as well as publishing the metrics to a MQTT and available in HomeAssistant.
+The ESP is programmed with [ESPhome](https://esphome.io/), where it makes the data available on the built in web-interface, exposing to Prometheus as well as publishing the metrics to MQTT and to Home Assistant via the native API.
 
 I had to define some new addresses in the config to get the 3-phase values I was interested in.
 
@@ -38,9 +38,19 @@ api_encr_b64key: <a base64-encoded 32-byte key for the Home Assistant API encryp
 ```
 Make sure to place the `secrets.yaml` file in the root path of the cloned project.
 
-Flash ESPHome as usual with `spapower.yaml`. If everything works, Home Assistant will autodetect the new integration once the device is connected to the Eastron meter via Modbus.
+Flash the firmware with ESPHome as usual:
+```
+esphome run spapower.yaml
+```
+On the first flash connect the D1 Mini over USB; afterwards updates can be pushed Over-The-Air (OTA) over WiFi.
+
+Once running, Home Assistant will autodetect the device via the native ESPHome API once it is connected to the Eastron meter via Modbus. The sensor values are also published to MQTT (under the `spapower` topic prefix, with MQTT discovery disabled to avoid duplicating the entities already provided by the native API) and are available on the built-in web interface (port 80) and the Prometheus endpoint.
 
 If you do not receive any data, double check the Modbus wiring (RS485-TTL converter to the D1 Mini's UART pins) and try setting the log level to `DEBUG` in ESPHome for more feedback.
+
+## Testing
+Monitor what's being sent to the MQTT bus with the following command:
+```mosquitto_sub -h 192.150.23.16 -p 1883 -t spapower/+/# -v```
 
 ## Technical documentation
 Specification overview:
