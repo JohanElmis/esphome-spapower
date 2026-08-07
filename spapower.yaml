@@ -1,5 +1,13 @@
 substitutions:
   device_name: spapower
+  # Phase angle and grid frequency are set internal (not published to MQTT/HA) by default below,
+  # since phase angle is noisy/not very useful and frequency is usually measured elsewhere already.
+  # Set either to false to publish that sensor again - nothing else needs to change.
+  disable_phase_angle: true
+  disable_frequency: true
+  # A spa is a pure consumer, so it never exports energy back to the grid - these stay ~0.
+  # Set to false to publish the export energy sensors again - nothing else needs to change.
+  disable_export_energy: true
 
 esphome:
   name: ${device_name}
@@ -39,7 +47,7 @@ ota:
     password: !secret spapower_password
 
 mqtt:
-  broker: 192.150.23.16
+  broker: 10.0.60.100 #(mqtt.svc)
 #  username: villaelmerfjord
 #  password: !secret mqtt_password
   port: 1883
@@ -79,58 +87,199 @@ sensor:
     phase_a:
       current:
         name: "Spabad L1 Current"
+        filters:
+          - delta: 0.05
+          - heartbeat:
+              period: 300s
+              optimistic: true
       voltage:
         name: "Spabad L1 Voltage"
+        filters:
+          - delta: 0.5
+          - heartbeat:
+              period: 300s
+              optimistic: true
       active_power:
         name: "Spabad L1 Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       power_factor:
         name: "Spabad L1 Power Factor"
+        filters:
+          - delta: 0.02
+          - heartbeat:
+              period: 300s
+              optimistic: true
       apparent_power:
         name: "Spabad L1 Apparent Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       reactive_power:
         name: "Spabad L1 Reactive Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       phase_angle:
         name: "Spabad L1 Phase Angle"
+        internal: ${disable_phase_angle}
+        filters:
+          - delta: 1
+          - heartbeat:
+              period: 300s
+              optimistic: true
     phase_b:
       current:
         name: "Spabad L2 Current"
+        filters:
+          - delta: 0.05
+          - heartbeat:
+              period: 300s
+              optimistic: true
       voltage:
         name: "Spabad L2 Voltage"
+        filters:
+          - delta: 0.5
+          - heartbeat:
+              period: 300s
+              optimistic: true
       active_power:
         name: "Spabad L2 Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       power_factor:
         name: "Spabad L2 Power Factor"
+        filters:
+          - delta: 0.02
+          - heartbeat:
+              period: 300s
+              optimistic: true
       apparent_power:
         name: "Spabad L2 Apparent Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       reactive_power:
         name: "Spabad L2 Reactive Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       phase_angle:
         name: "Spabad L2 Phase Angle"
+        internal: ${disable_phase_angle}
+        filters:
+          - delta: 1
+          - heartbeat:
+              period: 300s
+              optimistic: true
     phase_c:
       current:
         name: "Spabad L3 Current"
+        filters:
+          - delta: 0.05
+          - heartbeat:
+              period: 300s
+              optimistic: true
       voltage:
         name: "Spabad L3 Voltage"
+        filters:
+          - delta: 0.5
+          - heartbeat:
+              period: 300s
+              optimistic: true
       active_power:
         name: "Spabad L3 Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       power_factor:
         name: "Spabad L3 Power Factor"
+        filters:
+          - delta: 0.02
+          - heartbeat:
+              period: 300s
+              optimistic: true
       apparent_power:
         name: "Spabad L3 Apparent Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       reactive_power:
         name: "Spabad L3 Reactive Power"
+        filters:
+          - delta: 20
+          - heartbeat:
+              period: 300s
+              optimistic: true
       phase_angle:
         name: "Spabad L3 Phase Angle"
+        internal: ${disable_phase_angle}
+        filters:
+          - delta: 1
+          - heartbeat:
+              period: 300s
+              optimistic: true
     frequency:
       name: "Spabad Frequency"
+      internal: ${disable_frequency}
+      filters:
+        - delta: 0.02
+        - heartbeat:
+            period: 300s
+            optimistic: true
     total_power:
       name: "Spabad Total Power"
+      filters:
+        - delta: 20
+        - heartbeat:
+            period: 300s
+            optimistic: true
     import_active_energy:
       name: "Spabad Import Active Energy"
+      filters:
+        - delta: 0.01
+        - heartbeat:
+            period: 300s
+            optimistic: true
     export_active_energy:
       name: "Spabad Export Active Energy"
+      internal: ${disable_export_energy}
+      filters:
+        - delta: 0.01
+        - heartbeat:
+            period: 300s
+            optimistic: true
     import_reactive_energy:
       name: "Spabad Import Reactive Energy"
+      filters:
+        - delta: 0.01
+        - heartbeat:
+            period: 300s
+            optimistic: true
     export_reactive_energy:
       name: "Spabad Export Reactive Energy"
+      internal: ${disable_export_energy}
+      filters:
+        - delta: 0.01
+        - heartbeat:
+            period: 300s
+            optimistic: true
     update_interval: 10s

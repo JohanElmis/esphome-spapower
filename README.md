@@ -48,6 +48,11 @@ Once running, Home Assistant will autodetect the device via the native ESPHome A
 
 If you do not receive any data, double check the Modbus wiring (RS485-TTL converter to the D1 Mini's UART pins) and try setting the log level to `DEBUG` in ESPHome for more feedback.
 
+### Reducing MQTT/HA traffic
+Most sensors have `delta`/`heartbeat` filters so they only publish on a meaningful change (or at least every 5 minutes), instead of on every 10s poll.
+
+Per-phase angle, grid frequency, and the export energy sensors are set `internal: true` by default (`disable_phase_angle` / `disable_frequency` / `disable_export_energy` substitutions in `spapower.yaml`), so they're still read from the meter but are not published to MQTT or the Home Assistant API. Phase angle is noisy/rarely useful, frequency is usually measured elsewhere already, and a spa is a pure consumer so it never exports energy back to the grid (those sensors would just sit at ~0). Set any of the substitutions to `false` if you want that sensor back - no other changes needed.
+
 ## Testing
 Monitor what's being sent to the MQTT bus with the following command:
 ```mosquitto_sub -h 192.150.23.16 -p 1883 -t spapower/+/# -v```
